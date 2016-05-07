@@ -6,8 +6,17 @@ import tweepy
 class DataGatherer:
 
     def __init__(self):
-        self.__listner = TStreamListner()
-        self.__stream = tweepy.Stream()
         fu = FileUtils()
         prop = fu.getProperties()
-        self.auth = tweepy.Stream(auth = )
+        auth = tweepy.OAuthHandler(prop.get("APIKEY"), prop.get("APISECRET"))
+        auth.set_access_token(prop.get("ACCESSTOKEN"), prop.get("ACCESSTOKENSECRET"))
+        self.__stream = tweepy.Stream(auth, TStreamListner())
+        fu = FileUtils("wordlist")
+        wordDict = fu.getWords()
+        wordList = list(wordDict.keys())
+        self.__stream.filter(track=wordList)
+
+
+
+
+DataGatherer()
