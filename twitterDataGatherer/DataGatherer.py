@@ -1,22 +1,29 @@
 from twitterDataGatherer.TStreamListner import TStreamListner
-from utilities.FileUtils import FileUtils
 import tweepy
 
 
 class DataGatherer:
-
     def __init__(self):
-        fu = FileUtils()
-        prop = fu.getProperties()
-        auth = tweepy.OAuthHandler(prop.get("APIKEY"), prop.get("APISECRET"))
-        auth.set_access_token(prop.get("ACCESSTOKEN"), prop.get("ACCESSTOKENSECRET"))
-        self.__stream = tweepy.Stream(auth, TStreamListner())
-        fu = FileUtils("wordlist")
-        wordDict = fu.getWords()
-        wordList = list(wordDict.keys())
-        self.__stream.filter(track=wordList)
+        self.__stream = None
+        self.__auth = None
+        self.__wordList = ['twitter']
 
+    def authenticate(self, keyDict):
+        try:
+            self.__auth = tweepy.OAuthHandler(keyDict.get("APIKEY"), keyDict.get("APISECRET"))
+            self.__auth.set_access_token(keyDict.get("ACCESSTOKEN"), keyDict.get("ACCESSTOKENSECRET"))
+        except ValueError:
+            print('unable to find keys')
 
+    def initStream(self):
+        if self.__auth is not None:
+            try:
+                self.__stream = tweepy.Stream(self.__auth, TStreamListner())
+                self.__stream.filter(track=self.__wordList, languages=['en'])
+            except ValueError:
+                print(ValueError)
+        else:
+            print('authenticate first and set word list')
 
-
-DataGatherer()
+    def setWordList(self, wl):
+        self.__wordList = wl

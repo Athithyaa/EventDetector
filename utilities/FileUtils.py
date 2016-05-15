@@ -14,8 +14,8 @@ class FileUtils:
                 splitStr = line.split("=")
                 dict[splitStr[0]] = splitStr[1]
             return dict
-        except ex :
-            print(ex)
+        except ValueError:
+            print(ValueError)
             return None
 
     def getWords(self):
@@ -27,6 +27,12 @@ class FileUtils:
                 # TODO: prioritize tweets by assigning ranks to words
                 dict[line] = 10
             return dict
-        except ex:
-            print(ex)
+        except ValueError:
+            print(ValueError)
             return None
+
+    def closeFile(self):
+        try:
+            self.__file.close()
+        except ValueError:
+            print('unable to close file')
